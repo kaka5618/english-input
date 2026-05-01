@@ -1,4 +1,13 @@
 (function attachInputAdapter(globalScope) {
+  const TEXT_INPUT_TYPES = new Set([
+    '',
+    'email',
+    'search',
+    'tel',
+    'text',
+    'url',
+  ]);
+
   /**
    * 判断当前页面是否是 WhatsApp Web。
    *
@@ -120,7 +129,9 @@
     }
 
     const tagName = element.tagName;
-    return tagName === 'TEXTAREA' || tagName === 'INPUT' || element.isContentEditable;
+    return tagName === 'TEXTAREA'
+      || (tagName === 'INPUT' && TEXT_INPUT_TYPES.has((element.type || '').toLowerCase()))
+      || element.isContentEditable;
   }
 
   /**
