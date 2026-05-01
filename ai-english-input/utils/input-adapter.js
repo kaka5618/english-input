@@ -18,6 +18,15 @@
   }
 
   /**
+   * 判断当前页面是否是 Gmail。
+   *
+   * @returns {boolean} 是否是 Gmail。
+   */
+  function isGmail() {
+    return location.hostname === 'mail.google.com';
+  }
+
+  /**
    * 判断元素是否像 WhatsApp Web 的消息输入框。
    *
    * @param {Element} element - 待检测元素。
@@ -69,6 +78,33 @@
   }
 
   /**
+   * 判断元素是否像 Gmail 撰写窗口的正文编辑区。
+   *
+   * @param {Element} element - 待检测元素。
+   * @returns {boolean} 是否为 Gmail 正文编辑区。
+   */
+  function isGmailEditor(element) {
+    if (!element || !element.isContentEditable || !isGmail()) {
+      return false;
+    }
+
+    const role = element.getAttribute('role');
+    const ariaLabel = (element.getAttribute('aria-label') || '').toLowerCase();
+    const isSignature = Boolean(element.closest('.gmail_signature'));
+
+    return Boolean(
+      !isSignature
+        && role === 'textbox'
+        && (
+          element.getAttribute('g_editable') === 'true'
+          || element.classList.contains('editable')
+          || ariaLabel.includes('message body')
+          || ariaLabel.includes('邮件正文')
+        ),
+    );
+  }
+
+  /**
    * 判断元素是否是插件支持的输入框。
    *
    * @param {Element | null} element - 待检测元素。
@@ -77,6 +113,10 @@
   function isSupportedInput(element) {
     if (!element) {
       return false;
+    }
+
+    if (isGmail()) {
+      return isGmailEditor(element);
     }
 
     const tagName = element.tagName;
@@ -152,6 +192,17 @@
   }
 
   /**
+   * 写入 Gmail 富文本正文编辑区，保留撰写窗口和草稿状态。
+   *
+   * @param {HTMLElement} element - Gmail 正文编辑区。
+   * @param {string} text - 待写入文本。
+   * @returns {void}
+   */
+  function writeGmailEditor(element, text) {
+    writeContentEditable(element, text);
+  }
+
+  /**
    * 写入 WhatsApp Web 输入框，仅替换当前编辑区内容，不触发发送。
    *
    * @param {HTMLElement} element - WhatsApp 可编辑输入框。
@@ -196,6 +247,11 @@
       return;
     }
 
+    if (isGmailEditor(element)) {
+      writeGmailEditor(element, text);
+      return;
+    }
+
     if (isWhatsAppInput(element)) {
       writeWhatsAppInput(element, text);
       return;
@@ -208,6 +264,7 @@
 
   globalScope.AEIInputAdapter = {
     isSupportedInput,
+    isGmailEditor,
     isRedditInput,
     isWhatsAppInput,
     readText,
