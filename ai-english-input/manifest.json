@@ -17,6 +17,7 @@
       ],
       "js": [
         "utils/trigger.js",
+        "utils/overlay.js",
         "content.js"
       ],
       "css": [

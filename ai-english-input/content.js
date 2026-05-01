@@ -1,10 +1,11 @@
 (function initializeContentScript() {
   const triggerController = AEITrigger.createTriggerController({
-    onTrigger({ originalText, triggerType }) {
+    onTrigger({ inputElement, originalText, triggerType }) {
       console.debug('AI English Input translation triggered', {
         triggerType,
         originalText,
       });
+      AEIOverlay.showLoadingOverlay(inputElement);
     },
   });
 
