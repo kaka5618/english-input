@@ -8,7 +8,7 @@
 
 ## 一、整体架构
 
-MVP 第一版聚焦 WhatsApp Web、Gmail 和通用输入框兜底能力。插件免费版只读取当前聚焦输入框内的用户输入文本，不自动读取聊天记录、邮件正文或页面上下文；上下文辅助回复作为后续 Pro 功能单独设计。
+MVP 第一版定位为跨境电商 / 外贸英文沟通助手，聚焦 WhatsApp Web、Gmail、Reddit 和通用输入框兜底能力。插件免费版只读取当前聚焦输入框内用户主动输入的中文意图，不自动读取聊天记录、邮件正文或页面上下文；上下文辅助回复作为后续 Pro 功能单独设计。
 
 ```
 ┌─────────────────────────────────────┐
@@ -22,14 +22,14 @@ MVP 第一版聚焦 WhatsApp Web、Gmail 和通用输入框兜底能力。插件
 ┌─────────────────────────────────────┐
 │            自建后端服务               │
 │                                     │
-│  路由层 → 额度校验 → Prompt 组装      │
+│  路由层 → 额度校验 → 沟通 Prompt 组装  │
 │               │                     │
 │           调用 GPT API               │
 └──────────────┬──────────────────────┘
                │
                ▼
 ┌─────────────────────────────────────┐
-│         OpenAI GPT-4o mini          │
+│     Qwen / OpenAI-compatible LLM    │
 └─────────────────────────────────────┘
 ```
 
@@ -105,7 +105,7 @@ ai-english-input/
 | 输入框类型 | 平台举例 | 读取内容方式 | 写入内容方式 |
 |---|---|---|---|
 | `<textarea>` | 通用网页表单 | `element.value` | `element.value = text` + 触发 `input` 事件 |
-| `contenteditable div` | WhatsApp Web、通用可编辑输入框 | `element.innerText` | 优先使用 Selection / Range 替换当前输入内容，并触发 `input` 事件 |
+| `contenteditable div` | WhatsApp Web、Reddit、通用可编辑输入框 | `element.innerText` | 优先使用 Selection / Range 替换当前输入内容，并触发 `input` 事件 |
 | 富文本编辑器 | Gmail | 定位当前编辑区内的可编辑节点 | 使用 Gmail 专用适配器写入，保留草稿状态和光标 |
 
 ### MVP 适配优先级
@@ -115,6 +115,7 @@ ai-english-input/
 | P0 | WhatsApp Web | 单独适配 contenteditable 输入框，验证读取、替换、光标停留、不自动发送 |
 | P0 | Gmail | 单独适配富文本编辑器，验证写入、换行、草稿保存 |
 | P0 | 通用 textarea | 标准表单兜底 |
+| P1 | Reddit | 评论、发帖、聊天输入框重点兼容，验证不自动提交 |
 | P1 | 通用 contenteditable | 尽量兼容，不承诺逐站稳定 |
 | P2 | Outlook、Twitter/X、Facebook Messenger、LinkedIn | 后续按平台单独适配 |
 
@@ -264,7 +265,7 @@ function positionOverlay(inputEl, overlayEl) {
 | 数据库 | **Redis** | 存每日用量计数，自动过期，性能好 |
 | 环境变量 | `.env` 文件 | 存 OpenAI API Key，不提交到代码仓库 |
 
-MVP 接口只接收当前输入框文本，不接收自动抓取的页面上下文。后续 Pro 版本如果加入上下文能力，应单独增加授权说明、请求字段和隐私策略。
+MVP 接口只接收当前输入框内用户主动输入的中文意图，不接收自动抓取的页面上下文。后续 Pro 版本如果加入上下文能力，应单独增加授权说明、请求字段和隐私策略。
 
 ### 后端文件结构
 
@@ -294,14 +295,14 @@ backend/
 
 ```json
 {
-  "text": "很抱歉，物流因为天气原因可能会延迟两天",
+  "text": "很抱歉，物流因为天气原因可能会延迟两天，请帮我写得礼貌一点",
   "scene": "cross_border_cs",
   "tone": "polite",
   "user_id": "uuid-xxxx-xxxx"
 }
 ```
 
-> 免费版请求参数不包含聊天记录、邮件正文、客户上一句话等上下文内容。
+> 免费版请求参数不包含聊天记录、邮件正文、客户上一句话等上下文内容，仅处理用户主动输入的中文意图。
 
 **响应体（成功）**
 
@@ -331,14 +332,14 @@ MVP 阶段接受匿名 UUID 被卸载重装绕过的风险，但后端应预留 
 
 ## 八、Prompt 设计
 
-每次请求发送给 GPT-4o mini 的 Prompt 结构如下：
+每次请求发送给 Qwen / OpenAI-compatible LLM 的 Prompt 结构如下：
 
 **System Prompt（固定，约 200 tokens）**
 
 ```
 You are a professional English writing assistant specialized in cross-border e-commerce communication.
 
-Your task: Translate the user's Chinese input into 3 English versions with different tones.
+Your task: Turn the user's Chinese business intent into 3 polished English reply candidates with different communication styles.
 Return ONLY a JSON array, no explanation, no markdown.
 
 Format:
@@ -351,6 +352,8 @@ Format:
 Scene: {scene}
 Tone preference: {tone}
 Rules:
+- Preserve the user's intent and do not invent business facts
+- Make each version suitable for cross-border e-commerce, sales, support, or social communication
 - Each version must be clearly different in style
 - Keep it natural, avoid robotic phrasing
 - Do not add extra explanation outside the JSON

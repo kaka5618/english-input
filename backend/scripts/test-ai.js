@@ -10,7 +10,7 @@ dotenv.config();
  */
 async function main() {
   const candidates = await generateTranslationCandidates({
-    text: '很抱歉，物流因为天气原因可能会延迟两天',
+    text: '客户问物流为什么还没到，帮我礼貌解释因为天气原因可能会延迟两天，并安抚一下',
     scene: 'cross_border_cs',
     tone: 'polite',
   });

@@ -1,6 +1,6 @@
 const SCENE_LABELS = {
   cross_border_cs: 'cross-border e-commerce customer service',
-  general: 'general translation',
+  general: 'general cross-border business communication',
 };
 
 const TONE_LABELS = {
@@ -28,10 +28,14 @@ function buildTranslationMessages({ text, scene = 'cross_border_cs', tone = 'pol
       role: 'system',
       content: [
         'You are a professional English writing assistant specialized in cross-border e-commerce communication.',
-        'Translate the user Chinese input into 3 natural English versions.',
+        'Turn the user Chinese business intent into 3 polished English reply candidates.',
         'Return ONLY a valid JSON array. Do not include markdown, code fences, or explanations.',
         'Each item must contain exactly these fields: "label" and "text".',
         'Use these exact labels in order: "礼貌自然", "简洁直接", "正式专业".',
+        'The "label" field must use Chinese labels, but the "text" field must be written in English only.',
+        'Do not output Chinese in the "text" field.',
+        'Preserve the user intent and do not invent order details, prices, policies, tracking numbers, or promises.',
+        'Make each version suitable for cross-border e-commerce, sales, support, email, or social communication.',
         'The three versions should be meaning-preserving and clearly different in expression style.',
         `Scene: ${sceneLabel}`,
         `Tone preference: ${toneLabel}`,
