@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI English Input</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="popup__header">
+        <img src="icons/icon48.png" alt="" class="popup__logo">
+        <div>
+          <h1>AI English Input</h1>
+          <p>中文输入，英文发送</p>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2>当前状态</h2>
+        <dl class="status-list">
+          <div>
+            <dt>输入语言</dt>
+            <dd id="input-language">中文</dd>
+          </div>
+          <div>
+            <dt>输出语言</dt>
+            <dd id="output-language">English</dd>
+          </div>
+          <div>
+            <dt>默认场景</dt>
+            <dd id="scene">跨境客服</dd>
+          </div>
+          <div>
+            <dt>默认语气</dt>
+            <dd id="tone">礼貌自然</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2>快捷键</h2>
+        <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> 翻译当前句</p>
+        <p><kbd>Esc</kbd> 关闭候选框</p>
+      </section>
+
+      <footer class="popup__footer">
+        <span id="user-id">正在初始化...</span>
+      </footer>
+    </main>
+
+    <script src="utils/storage.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
