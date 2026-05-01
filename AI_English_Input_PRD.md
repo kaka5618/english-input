@@ -157,6 +157,7 @@ Esc                 关闭候选框
 | P0（必须） | WhatsApp Web | contenteditable div，MVP 核心验收平台 |
 | P0（必须） | Gmail | 富文本编辑器，MVP 核心验收平台 |
 | P0（必须） | 通用 textarea | 标准 HTML textarea，兜底能力 |
+| P1（重要） | Reddit | 评论、发帖、聊天输入框，社媒运营重点兼容 |
 | P1（重要） | 通用 contenteditable | 常见网页可编辑输入框，尽量兼容但不逐站承诺 |
 | P2（后期） | Outlook Web | 富文本编辑器 |
 | P2（后期） | Twitter/X、Facebook Messenger、LinkedIn | contenteditable div |

@@ -9,12 +9,7 @@
    * @returns {boolean} 是否可作为输入区域。
    */
   function isSupportedInput(element) {
-    if (!element) {
-      return false;
-    }
-
-    const tagName = element.tagName;
-    return tagName === 'TEXTAREA' || tagName === 'INPUT' || element.isContentEditable;
+    return AEIInputAdapter.isSupportedInput(element);
   }
 
   /**
@@ -24,11 +19,7 @@
    * @returns {string} 当前输入文本。
    */
   function readInputText(element) {
-    if ('value' in element) {
-      return element.value;
-    }
-
-    return element.innerText || element.textContent || '';
+    return AEIInputAdapter.readText(element);
   }
 
   /**
