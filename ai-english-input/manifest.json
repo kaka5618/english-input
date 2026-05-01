@@ -16,6 +16,7 @@
         "<all_urls>"
       ],
       "js": [
+        "utils/trigger.js",
         "content.js"
       ],
       "css": [
