@@ -72,6 +72,17 @@
   border-radius: 10px;
 }
 
+.aei-item[role="button"] {
+  cursor: pointer;
+}
+
+.aei-item[role="button"]:hover,
+.aei-item[role="button"]:focus {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  outline: none;
+}
+
 .aei-num {
   display: inline-flex;
   align-items: center;
@@ -97,6 +108,14 @@
 
 .aei-item--placeholder .aei-text {
   color: #98a2b3;
+}
+
+.aei-error {
+  padding: 10px 12px;
+  color: #b42318;
+  background: #fff1f0;
+  border: 1px solid #ffdad6;
+  border-radius: 10px;
 }
 
 @keyframes aei-spin {

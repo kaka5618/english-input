@@ -9,6 +9,7 @@
     toneLabel: '礼貌自然',
   };
   let currentAnchorElement = null;
+  let currentCandidates = [];
 
   /**
    * 创建带 class 的 DOM 元素。
@@ -42,6 +43,7 @@
     }
 
     currentAnchorElement = null;
+    currentCandidates = [];
     window.removeEventListener('resize', refreshOverlayPosition, true);
     window.removeEventListener('scroll', refreshOverlayPosition, true);
   }
@@ -87,6 +89,102 @@
     });
 
     return candidates;
+  }
+
+  /**
+   * 获取当前候选框 DOM。
+   *
+   * @returns {HTMLElement | null} 候选框 DOM。
+   */
+  function getOverlay() {
+    return document.getElementById(OVERLAY_ID);
+  }
+
+  /**
+   * 隐藏加载态。
+   *
+   * @param {HTMLElement} overlay - 候选框 DOM。
+   * @returns {void}
+   */
+  function hideLoading(overlay) {
+    const loading = overlay.querySelector('.aei-loading');
+
+    if (loading) {
+      loading.classList.add('aei-hidden');
+    }
+  }
+
+  /**
+   * 用真实候选结果替换占位候选。
+   *
+   * @param {Array<{label: string, text: string}>} candidates - 后端返回的候选句。
+   * @returns {void}
+   */
+  function showCandidates(candidates) {
+    const overlay = getOverlay();
+
+    if (!overlay) {
+      return;
+    }
+
+    const candidatesElement = overlay.querySelector('.aei-candidates');
+
+    if (!candidatesElement) {
+      return;
+    }
+
+    hideLoading(overlay);
+    currentCandidates = candidates;
+    candidatesElement.textContent = '';
+    candidates.forEach((candidate, index) => {
+      const item = createElement('div', 'aei-item');
+      item.dataset.index = String(index);
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.append(
+        createElement('span', 'aei-num', String(index + 1)),
+        createElement('span', 'aei-label', candidate.label),
+        createElement('span', 'aei-text', candidate.text),
+      );
+      candidatesElement.append(item);
+    });
+    refreshOverlayPosition();
+  }
+
+  /**
+   * 展示翻译失败提示。
+   *
+   * @param {string} message - 失败提示文案。
+   * @returns {void}
+   */
+  function showError(message) {
+    const overlay = getOverlay();
+
+    if (!overlay) {
+      return;
+    }
+
+    const candidatesElement = overlay.querySelector('.aei-candidates');
+
+    if (!candidatesElement) {
+      return;
+    }
+
+    hideLoading(overlay);
+    currentCandidates = [];
+    candidatesElement.textContent = '';
+    candidatesElement.append(createElement('div', 'aei-error', message));
+    refreshOverlayPosition();
+  }
+
+  /**
+   * 根据索引读取当前候选。
+   *
+   * @param {number} index - 候选索引。
+   * @returns {{label: string, text: string} | null} 候选句。
+   */
+  function getCandidate(index) {
+    return currentCandidates[index] || null;
   }
 
   /**
@@ -173,8 +271,11 @@
   }
 
   globalScope.AEIOverlay = {
+    getCandidate,
     positionOverlay,
     removeOverlay,
+    showCandidates,
+    showError,
     showLoadingOverlay,
   };
 })(globalThis);

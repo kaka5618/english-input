@@ -16,7 +16,9 @@
         "<all_urls>"
       ],
       "js": [
+        "utils/storage.js",
         "utils/trigger.js",
+        "utils/input-adapter.js",
         "utils/overlay.js",
         "content.js"
       ],
