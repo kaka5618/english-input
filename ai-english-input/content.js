@@ -11,6 +11,7 @@
     apology: '安抚道歉',
   };
   let activeInputElement = null;
+  let activeOriginalText = '';
 
   /**
    * 通过扩展后台请求后端翻译接口，避免页面环境影响跨域请求。
@@ -88,6 +89,7 @@
 
     try {
       activeInputElement = inputElement;
+      activeOriginalText = originalText;
       AEIOverlay.showLoadingOverlay(inputElement);
       const [settings, userId] = await Promise.all([
         AEIStorage.getSettings(),
@@ -129,6 +131,22 @@
     AEIInputAdapter.writeText(activeInputElement, candidate.text);
     AEIOverlay.removeOverlay();
     activeInputElement = null;
+    activeOriginalText = '';
+  }
+
+  /**
+   * 取消候选框并恢复触发前的中文原文。
+   *
+   * @returns {void}
+   */
+  function cancelTranslation() {
+    if (activeInputElement && activeOriginalText) {
+      AEIInputAdapter.writeText(activeInputElement, activeOriginalText);
+    }
+
+    AEIOverlay.removeOverlay();
+    activeInputElement = null;
+    activeOriginalText = '';
   }
 
   const triggerController = AEITrigger.createTriggerController({
@@ -139,8 +157,8 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-      AEIOverlay.removeOverlay();
-      activeInputElement = null;
+      event.preventDefault();
+      cancelTranslation();
       return;
     }
 
@@ -167,6 +185,7 @@
 
   triggerController.start();
   globalThis.AEIContent = {
+    cancelTranslation,
     selectCandidate,
     triggerController,
   };
