@@ -278,11 +278,11 @@ backend/
 │   ├── rateLimit.js      # 每日额度校验
 │   └── validate.js       # 请求参数校验
 ├── services/
-│   ├── openai.js         # 调用 GPT-4o mini 封装
+│   ├── openai.js         # 调用 OpenAI-compatible AI 服务封装
 │   └── prompt.js         # 根据场景/语气组装 Prompt
-├── utils/
-│   └── redis.js          # Redis 读写封装
-└── .env                  # OPENAI_API_KEY=sk-xxx
+├── api/
+│   └── index.js          # Vercel Serverless 入口
+└── .env                  # AI_API_KEY / UPSTASH_REDIS_REST_TOKEN 等本地环境变量
 ```
 
 ---
@@ -464,7 +464,7 @@ content.js 接收结果
 | 恶意刷接口 | Redis 额度限制 + 公开发布前增加 IP / UA 频率限制 |
 | XSS 注入 | 候选框写入 DOM 时用 `textContent` 而非 `innerHTML` |
 | 用户输入过长 | 后端校验 `text` 长度上限（免费版建议 100 个中文字符，Pro 可放宽到 300-500 字符） |
-| HTTPS | 后端部署强制 HTTPS，Railway/Render 默认支持 |
+| HTTPS | 后端部署强制 HTTPS，Vercel 默认提供 HTTPS |
 | 输入框适配失效 | WhatsApp Web、Gmail 建立固定回归测试清单，DOM 变化后优先修复 |
 | 权限和隐私质疑 | Chrome 商店说明中明确插件仅在用户触发时读取当前输入框内容 |
 | AI 响应超时 | 插件端设置超时、失败提示和保留原文，避免用户输入丢失 |

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AI English Input",
-  "description": "Translate Chinese input into natural English candidates in WhatsApp Web, Gmail, and common web inputs.",
+  "description": "跨境电商英文沟通助手：不是生硬翻译，而是把中文意图生成可直接回复客户的专业英文候选。",
   "version": "0.1.0",
   "permissions": [
     "storage",
