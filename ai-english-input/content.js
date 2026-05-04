@@ -2,6 +2,8 @@
   const MESSAGE_TIMEOUT_MS = 20000;
   const SCENE_LABELS = {
     cross_border_cs: '跨境客服',
+    foreign_trade_email: '外贸邮件',
+    social_media: '社媒互动',
     general: '通用翻译',
   };
   const TONE_LABELS = {

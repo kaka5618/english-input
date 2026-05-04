@@ -1,5 +1,7 @@
 const SCENE_LABELS = {
   cross_border_cs: '跨境客服',
+  foreign_trade_email: '外贸邮件',
+  social_media: '社媒互动',
   general: '通用翻译',
 };
 
@@ -26,6 +28,21 @@ function setText(id, text) {
 }
 
 /**
+ * 设置下拉框当前值。
+ *
+ * @param {string} id - select 元素 ID。
+ * @param {string} value - 当前设置值。
+ * @returns {void}
+ */
+function setSelectValue(id, value) {
+  const element = document.getElementById(id);
+
+  if (element) {
+    element.value = value;
+  }
+}
+
+/**
  * 更新今日剩余额度展示。
  *
  * @param {number} remaining - 本地缓存中的今日剩余次数。
@@ -44,6 +61,47 @@ function setRemaining(remaining) {
 }
 
 /**
+ * 根据设置刷新 Popup 状态展示。
+ *
+ * @param {object} settings - 用户设置。
+ * @param {string} settings.inputLanguage - 输入语言。
+ * @param {string} settings.outputLanguage - 输出语言。
+ * @param {string} settings.scene - 当前场景。
+ * @param {string} settings.tone - 当前语气。
+ * @param {number} settings.remaining - 今日剩余次数。
+ * @returns {void}
+ */
+function renderSettings(settings) {
+  setText('input-language', settings.inputLanguage);
+  setText('output-language', settings.outputLanguage);
+  setText('scene', SCENE_LABELS[settings.scene] || settings.scene);
+  setText('tone', TONE_LABELS[settings.tone] || settings.tone);
+  setRemaining(settings.remaining);
+  setSelectValue('scene-select', settings.scene);
+  setSelectValue('tone-select', settings.tone);
+}
+
+/**
+ * 绑定场景和语气切换事件，保存后立即刷新状态展示。
+ *
+ * @returns {void}
+ */
+function bindSettingControls() {
+  const sceneSelect = document.getElementById('scene-select');
+  const toneSelect = document.getElementById('tone-select');
+
+  sceneSelect?.addEventListener('change', async (event) => {
+    const settings = await AEIStorage.saveSettings({ scene: event.target.value });
+    renderSettings(settings);
+  });
+
+  toneSelect?.addEventListener('change', async (event) => {
+    const settings = await AEIStorage.saveSettings({ tone: event.target.value });
+    renderSettings(settings);
+  });
+}
+
+/**
  * 初始化 Popup 状态展示。
  *
  * @returns {Promise<void>}
@@ -54,12 +112,9 @@ async function initializePopup() {
     AEIStorage.getSettings(),
   ]);
 
-  setText('input-language', settings.inputLanguage);
-  setText('output-language', settings.outputLanguage);
-  setText('scene', SCENE_LABELS[settings.scene] || settings.scene);
-  setText('tone', TONE_LABELS[settings.tone] || settings.tone);
-  setRemaining(settings.remaining);
+  renderSettings(settings);
   setText('user-id', `用户 ID：${userId}`);
+  bindSettingControls();
 }
 
 initializePopup().catch((error) => {

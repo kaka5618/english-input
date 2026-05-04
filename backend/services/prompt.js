@@ -1,5 +1,7 @@
 const SCENE_LABELS = {
   cross_border_cs: 'cross-border e-commerce customer service',
+  foreign_trade_email: 'foreign trade business email',
+  social_media: 'cross-border social media interaction',
   general: 'general cross-border business communication',
 };
 

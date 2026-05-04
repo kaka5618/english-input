@@ -81,6 +81,36 @@ dd {
   color: #b42318;
 }
 
+.setting-list {
+  display: grid;
+  gap: 10px;
+}
+
+.setting-field {
+  display: grid;
+  gap: 6px;
+  color: #667085;
+  font-size: 12px;
+}
+
+.setting-field select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  color: #172033;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 9px;
+}
+
+.setting-field select:focus {
+  border-color: #2563eb;
+  outline: 2px solid rgba(37, 99, 235, 0.15);
+}
+
 kbd {
   padding: 2px 5px;
   font-size: 11px;
