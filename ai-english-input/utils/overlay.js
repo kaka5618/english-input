@@ -178,6 +178,46 @@
   }
 
   /**
+   * 展示每日免费额度已用完的提示和升级引导。
+   *
+   * @param {object} [options] - 超额提示参数。
+   * @param {number} [options.limit] - 每日免费额度。
+   * @returns {void}
+   */
+  function showLimitExceeded(options = {}) {
+    const overlay = getOverlay();
+
+    if (!overlay) {
+      return;
+    }
+
+    const candidatesElement = overlay.querySelector('.aei-candidates');
+
+    if (!candidatesElement) {
+      return;
+    }
+
+    const limit = options.limit || 15;
+    const notice = createElement('div', 'aei-limit-notice');
+    const title = createElement('div', 'aei-limit-title', '今日免费次数已用完');
+    const description = createElement(
+      'div',
+      'aei-limit-description',
+      `免费版每天可生成 ${limit} 次英文回复候选。你可以明天继续使用，或升级获得更高额度。`,
+    );
+    const action = createElement('button', 'aei-limit-action', '升级 Pro（即将开放）');
+
+    action.type = 'button';
+    action.disabled = true;
+    hideLoading(overlay);
+    currentCandidates = [];
+    candidatesElement.textContent = '';
+    notice.append(title, description, action);
+    candidatesElement.append(notice);
+    refreshOverlayPosition();
+  }
+
+  /**
    * 根据索引读取当前候选。
    *
    * @param {number} index - 候选索引。
@@ -276,6 +316,7 @@
     removeOverlay,
     showCandidates,
     showError,
+    showLimitExceeded,
     showLoadingOverlay,
   };
 })(globalThis);

@@ -14,6 +14,20 @@
   let activeOriginalText = '';
 
   /**
+   * 创建带后端错误详情的异常，方便 UI 展示精确状态。
+   *
+   * @param {object} response - 扩展后台返回的响应。
+   * @returns {Error & {code?: string, limit?: number, remaining?: number}} 请求异常。
+   */
+  function createTranslationError(response) {
+    const error = new Error(response?.error || 'translate_failed');
+    error.code = response?.error || 'translate_failed';
+    error.limit = response?.limit;
+    error.remaining = response?.remaining;
+    return error;
+  }
+
+  /**
    * 通过扩展后台请求后端翻译接口，避免页面环境影响跨域请求。
    *
    * @param {object} params - 请求参数。
@@ -26,7 +40,7 @@
   async function requestTranslation({ text, scene, tone, userId }) {
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
-        reject(new Error('request_timeout'));
+        reject(createTranslationError({ error: 'request_timeout' }));
       }, MESSAGE_TIMEOUT_MS);
 
       chrome.runtime.sendMessage(
@@ -48,7 +62,7 @@
           }
 
           if (!response?.ok) {
-            reject(new Error(response?.error || 'translate_failed'));
+            reject(createTranslationError(response));
             return;
           }
 
@@ -111,6 +125,15 @@
       });
     } catch (error) {
       console.error('AI English Input translation failed', error);
+
+      if (error.code === 'daily_limit_exceeded') {
+        AEIOverlay.showLimitExceeded({ limit: error.limit });
+        AEIStorage.saveSettings({ remaining: 0 }).catch((storageError) => {
+          console.warn('AI English Input failed to save remaining usage', storageError);
+        });
+        return;
+      }
+
       AEIOverlay.showError('翻译失败，请稍后重试。原中文内容已保留在输入框内。');
     }
   }

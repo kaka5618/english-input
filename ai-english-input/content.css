@@ -118,6 +118,40 @@
   border-radius: 10px;
 }
 
+.aei-limit-notice {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+}
+
+.aei-limit-title {
+  color: #9a3412;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.aei-limit-description {
+  color: #7c2d12;
+  font-size: 13px;
+}
+
+.aei-limit-action {
+  justify-self: start;
+  padding: 7px 12px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f97316;
+  border: 0;
+  border-radius: 999px;
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 @keyframes aei-spin {
   to {
     transform: rotate(360deg);

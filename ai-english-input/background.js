@@ -4,6 +4,21 @@ const API_URL = 'https://backend-delta-three-81.vercel.app/api/translate';
 const REQUEST_TIMEOUT_MS = 15000;
 
 /**
+ * 创建带后端错误详情的异常，方便 content script 区分超额和普通失败。
+ *
+ * @param {object} payload - 后端错误响应。
+ * @param {string} fallbackCode - 兜底错误码。
+ * @returns {Error & {code?: string, limit?: number, remaining?: number}} 请求异常。
+ */
+function createApiError(payload, fallbackCode) {
+  const error = new Error(payload?.error || fallbackCode);
+  error.code = payload?.error || fallbackCode;
+  error.limit = payload?.limit;
+  error.remaining = payload?.remaining;
+  return error;
+}
+
+/**
  * 请求后端翻译接口，统一放在扩展后台执行，避免页面环境影响跨域请求。
  *
  * @param {object} params - 请求参数。
@@ -34,7 +49,7 @@ async function requestTranslation({ text, scene, tone, userId }) {
     const payload = await response.json();
 
     if (!response.ok) {
-      throw new Error(payload.error || 'translate_failed');
+      throw createApiError(payload, 'translate_failed');
     }
 
     return payload;
@@ -62,7 +77,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       console.error('translation_request_failed', error);
       sendResponse({
         ok: false,
-        error: error.name === 'AbortError' ? 'request_timeout' : error.message,
+        error: error.name === 'AbortError' ? 'request_timeout' : error.code || error.message,
+        limit: error.limit,
+        remaining: error.remaining,
       });
     });
 
