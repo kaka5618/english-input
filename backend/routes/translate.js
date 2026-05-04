@@ -1,12 +1,12 @@
 const express = require('express');
+const { dailyUsageLimit } = require('../middleware/rateLimit');
 const { validateTranslateRequest } = require('../middleware/validate');
 const { generateTranslationCandidates } = require('../services/openai');
 
 const router = express.Router();
-const TEMPORARY_REMAINING_COUNT = 15;
 
 /**
- * 处理翻译请求，当前阶段暂未接入 Redis 额度，remaining 固定返回 15。
+ * 处理翻译请求，并返回本次扣减后的剩余额度。
  *
  * @param {import('express').Request} req - Express 请求对象。
  * @param {import('express').Response} res - Express 响应对象。
@@ -20,17 +20,17 @@ async function translateHandler(req, res) {
 
     res.json({
       candidates,
-      remaining: TEMPORARY_REMAINING_COUNT,
+      remaining: req.usage.remaining,
     });
   } catch (error) {
     console.error('translate_failed', error);
     res.status(502).json({
       error: 'ai_service_error',
-      remaining: TEMPORARY_REMAINING_COUNT,
+      remaining: req.usage?.remaining ?? 0,
     });
   }
 }
 
-router.post('/translate', validateTranslateRequest, translateHandler);
+router.post('/translate', validateTranslateRequest, dailyUsageLimit, translateHandler);
 
 module.exports = router;
