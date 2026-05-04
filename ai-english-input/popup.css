@@ -111,6 +111,22 @@ dd {
   outline: 2px solid rgba(37, 99, 235, 0.15);
 }
 
+.shortcut-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.shortcut-list li {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #667085;
+  font-size: 12px;
+}
+
 kbd {
   padding: 2px 5px;
   font-size: 11px;
@@ -119,10 +135,31 @@ kbd {
   border-radius: 5px;
 }
 
-.card p + p {
-  margin-top: 8px;
+.popup__footer {
+  display: grid;
+  gap: 8px;
+  word-break: break-all;
 }
 
-.popup__footer {
-  word-break: break-all;
+.footer-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.footer-nav a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer-nav a:hover,
+.footer-nav a:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+.footer-message {
+  min-height: 16px;
+  color: #b45309;
 }

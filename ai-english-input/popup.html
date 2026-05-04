@@ -68,12 +68,20 @@
 
       <section class="card">
         <h2>快捷键</h2>
-        <p><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> 翻译当前句</p>
-        <p><kbd>Esc</kbd> 关闭候选框</p>
+        <ul class="shortcut-list">
+          <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd><span>生成当前输入</span></li>
+          <li><kbd>Tab</kbd><span>浏览候选（规划中）</span></li>
+          <li><kbd>Esc</kbd><span>关闭候选框</span></li>
+        </ul>
       </section>
 
       <footer class="popup__footer">
         <span id="user-id">正在初始化...</span>
+        <nav class="footer-nav" aria-label="底部导航">
+          <a href="#" data-placeholder-link>查看历史</a>
+          <a href="https://github.com/kaka5618/english-input/issues" target="_blank" rel="noreferrer">反馈问题</a>
+        </nav>
+        <span id="footer-message" class="footer-message" aria-live="polite"></span>
       </footer>
     </main>
 

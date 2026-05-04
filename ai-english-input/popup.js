@@ -102,6 +102,25 @@ function bindSettingControls() {
 }
 
 /**
+ * 绑定本期尚未实现的底部入口，避免点击后出现空白页。
+ *
+ * @returns {void}
+ */
+function bindFooterLinks() {
+  const footerMessage = document.getElementById('footer-message');
+
+  document.querySelectorAll('[data-placeholder-link]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      if (footerMessage) {
+        footerMessage.textContent = '查看历史功能将在后续版本开放。';
+      }
+    });
+  });
+}
+
+/**
  * 初始化 Popup 状态展示。
  *
  * @returns {Promise<void>}
@@ -115,6 +134,7 @@ async function initializePopup() {
   renderSettings(settings);
   setText('user-id', `用户 ID：${userId}`);
   bindSettingControls();
+  bindFooterLinks();
 }
 
 initializePopup().catch((error) => {
