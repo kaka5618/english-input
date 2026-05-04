@@ -26,6 +26,24 @@ function setText(id, text) {
 }
 
 /**
+ * 更新今日剩余额度展示。
+ *
+ * @param {number} remaining - 本地缓存中的今日剩余次数。
+ * @returns {void}
+ */
+function setRemaining(remaining) {
+  const element = document.getElementById('remaining');
+  const count = Number.isInteger(remaining) ? remaining : 15;
+
+  if (!element) {
+    return;
+  }
+
+  element.textContent = count > 0 ? `${count} 次` : '已用完';
+  element.classList.toggle('usage-count--empty', count <= 0);
+}
+
+/**
  * 初始化 Popup 状态展示。
  *
  * @returns {Promise<void>}
@@ -40,6 +58,7 @@ async function initializePopup() {
   setText('output-language', settings.outputLanguage);
   setText('scene', SCENE_LABELS[settings.scene] || settings.scene);
   setText('tone', TONE_LABELS[settings.tone] || settings.tone);
+  setRemaining(settings.remaining);
   setText('user-id', `用户 ID：${userId}`);
 }
 

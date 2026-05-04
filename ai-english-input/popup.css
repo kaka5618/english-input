@@ -73,6 +73,14 @@ dd {
   font-weight: 600;
 }
 
+.usage-count {
+  color: #2563eb;
+}
+
+.usage-count--empty {
+  color: #b42318;
+}
+
 kbd {
   padding: 2px 5px;
   font-size: 11px;
