@@ -1,4 +1,4 @@
-const MAX_TEXT_LENGTH = 500;
+const MAX_TEXT_LENGTH = 100;
 
 /**
  * 判断文本是否包含中文字符，避免空请求或纯英文请求消耗模型额度。

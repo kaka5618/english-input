@@ -463,7 +463,7 @@ content.js 接收结果
 | API Key 泄露 | Key 仅存后端 `.env`，插件侧不持有 |
 | 恶意刷接口 | Redis 额度限制 + 公开发布前增加 IP / UA 频率限制 |
 | XSS 注入 | 候选框写入 DOM 时用 `textContent` 而非 `innerHTML` |
-| 用户输入过长 | 后端校验 `text` 长度上限（建议 500 字符） |
+| 用户输入过长 | 后端校验 `text` 长度上限（免费版建议 100 个中文字符，Pro 可放宽到 300-500 字符） |
 | HTTPS | 后端部署强制 HTTPS，Railway/Render 默认支持 |
 | 输入框适配失效 | WhatsApp Web、Gmail 建立固定回归测试清单，DOM 变化后优先修复 |
 | 权限和隐私质疑 | Chrome 商店说明中明确插件仅在用户触发时读取当前输入框内容 |

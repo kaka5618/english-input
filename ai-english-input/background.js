@@ -8,13 +8,14 @@ const REQUEST_TIMEOUT_MS = 15000;
  *
  * @param {object} payload - 后端错误响应。
  * @param {string} fallbackCode - 兜底错误码。
- * @returns {Error & {code?: string, limit?: number, remaining?: number}} 请求异常。
+ * @returns {Error & {code?: string, limit?: number, remaining?: number, maxLength?: number}} 请求异常。
  */
 function createApiError(payload, fallbackCode) {
   const error = new Error(payload?.error || fallbackCode);
   error.code = payload?.error || fallbackCode;
   error.limit = payload?.limit;
   error.remaining = payload?.remaining;
+  error.maxLength = payload?.max_length;
   return error;
 }
 
@@ -79,6 +80,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
         ok: false,
         error: error.name === 'AbortError' ? 'request_timeout' : error.code || error.message,
         limit: error.limit,
+        maxLength: error.maxLength,
         remaining: error.remaining,
       });
     });

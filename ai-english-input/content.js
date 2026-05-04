@@ -17,13 +17,14 @@
    * 创建带后端错误详情的异常，方便 UI 展示精确状态。
    *
    * @param {object} response - 扩展后台返回的响应。
-   * @returns {Error & {code?: string, limit?: number, remaining?: number}} 请求异常。
+   * @returns {Error & {code?: string, limit?: number, remaining?: number, maxLength?: number}} 请求异常。
    */
   function createTranslationError(response) {
     const error = new Error(response?.error || 'translate_failed');
     error.code = response?.error || 'translate_failed';
     error.limit = response?.limit;
     error.remaining = response?.remaining;
+    error.maxLength = response?.maxLength;
     return error;
   }
 
@@ -131,6 +132,11 @@
         AEIStorage.saveSettings({ remaining: 0 }).catch((storageError) => {
           console.warn('AI English Input failed to save remaining usage', storageError);
         });
+        return;
+      }
+
+      if (error.code === 'text_too_long') {
+        AEIOverlay.showError(`当前输入内容太长，请控制在 ${error.maxLength || 100} 字以内。你可以分多次生成。`);
         return;
       }
 
